@@ -108,7 +108,7 @@ export function Player() {
                         ) : (
                             <div className={styles.emptySlider} />)}
                     </div>
-                    <span>{convertDurationToTimeString(episode?.duration) ?? 0}</span>
+                    <span>{episode ? convertDurationToTimeString(episode.duration) : '00:00:00'}</span>
                 </div>
 
                 {episode && (
