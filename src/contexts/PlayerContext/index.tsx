@@ -20,6 +20,10 @@ type PlayerContextData = {
     setPlayingState: (state: boolean) => void;
     hasNext: boolean;
     hasPrevious: boolean;
+    isLooping: boolean;
+    toggleLoop: () => void;
+    isShuffling: boolean;
+    toggleShuffle: () => void;
 }
 
 export const PlayerContext = createContext({} as PlayerContextData);
@@ -32,6 +36,8 @@ export const PlayerContextProvider = ({ children }) => {
     const [episodeList, setEpisodeList] = useState([]);
     const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [isLooping, setIsLooping] = useState(false);
+    const [isShuffling, setIsShuffling] = useState(false);
 
     const play = (episode) => {
         setEpisodeList([episode])
@@ -49,22 +55,32 @@ export const PlayerContextProvider = ({ children }) => {
         setIsPlaying(!isPlaying)
     }
 
+    const toggleLoop = () => {
+        setIsLooping(!isLooping)
+    }
+
+    const toggleShuffle = () => {
+        setIsShuffling(!isShuffling)
+    }
+
     const hasPrevious = currentEpisodeIndex > 0;
     const hasNext = (currentEpisodeIndex + 1) < episodeList.length;
 
     const playNext = () => {
-        const nextEpisodeIndex = currentEpisodeIndex + 1
 
-        if (hasNext) {
-            setCurrentEpisodeIndex(nextEpisodeIndex)
+        if (isShuffling) {
+            const nextRandomEpisodeIndex = Math.floor(Math.random() * episodeList.length)
+
+            setCurrentEpisodeIndex(nextRandomEpisodeIndex)
+        } else if (hasNext) {
+            setCurrentEpisodeIndex(currentEpisodeIndex + 1)
         }
     }
 
     const playPrevious = () => {
-        const previousEpisodeIndex = currentEpisodeIndex - 1
 
         if (hasPrevious) {
-            setCurrentEpisodeIndex(previousEpisodeIndex)
+            setCurrentEpisodeIndex(currentEpisodeIndex - 1)
         }
     }
 
@@ -83,6 +99,10 @@ export const PlayerContextProvider = ({ children }) => {
             togglePlay,
             isPlaying,
             setPlayingState,
+            toggleLoop,
+            isLooping,
+            toggleShuffle,
+            isShuffling,
             hasNext,
             hasPrevious,
         }}>
